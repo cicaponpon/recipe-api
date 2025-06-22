@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.32.xsd">
+    <changeSet author="chin" id="1750596430781-1">
+        <createTable tableName="recipe">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="recipePK"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP(6) WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP(6) WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="instruction" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="servings" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="vegetarian" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="chin" id="1750596430781-2">
+        <createTable tableName="recipe_ingredients">
+            <column name="recipe_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ingredients" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="chin" id="1750596430781-3">
+        <addForeignKeyConstraint baseColumnNames="recipe_id" baseTableName="recipe_ingredients" constraintName="FKhnsmvxdlwxqq6x2wbgnoef5gr" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="recipe" validate="true"/>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <!-- Model Version -->
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Parent -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.5.3</version>
+        <relativePath/>
+    </parent>
+
+    <!-- Artifact -->
+    <groupId>com.api</groupId>
+    <artifactId>recipe</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>recipe</name>
+    <description>Recipe management API</description>
+
+    <!-- Properties -->
+    <properties>
+        <java.version>17</java.version>
+        <hibernate-validator.version>8.0.2.Final</hibernate-validator.version>
+        <jakarta-validation-api.version>3.1.0</jakarta-validation-api.version>
+        <liquibase-core.version>4.32.0</liquibase-core.version>
+        <liquibase-hibernate6.version>4.32.0</liquibase-hibernate6.version>
+        <liquibase-maven-plugin.version>4.32.0</liquibase-maven-plugin.version>
+        <lombok.version>1.18.38</lombok.version>
+        <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
+        <postgresql.version>42.7.7</postgresql.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring-boot.version>3.5.3</spring-boot.version>
+    </properties>
+
+    <!-- Dependencies -->
+    <dependencies>
+        <!-- REST API -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Validation -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- JPA / Hibernate -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <!-- PostgreSQL Driver -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Liquibase Core -->
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>${liquibase-core.version}</version>
+        </dependency>
+
+        <!-- Dev Tools -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Testing -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Lombok (annotation processing) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+
+            <!-- Spring Boot Plugin -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <version>${liquibase-maven-plugin.version}</version>
+                <configuration>
+                    <propertyFile>src/main/resources/liquibase/main/config/liquibase-dev.properties</propertyFile>
+                    <logging>info</logging>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.liquibase.ext</groupId>
+                        <artifactId>liquibase-hibernate6</artifactId>
+                        <version>${liquibase-hibernate6.version}</version>
+                        <scope>runtime</scope>
+                    </dependency>
+                    <!-- Spring Boot Starter -->
+                    <dependency>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-starter</artifactId>
+                        <version>${spring-boot.version}</version>
+                    </dependency>
+                    <!-- Spring Boot Starter Data JPA -->
+                    <dependency>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-starter-data-jpa</artifactId>
+                        <version>${spring-boot.version}</version>
+                    </dependency>
+                    <!-- PostgreSQL Driver -->
+                    <dependency>
+                        <groupId>org.postgresql</groupId>
+                        <artifactId>postgresql</artifactId>
+                        <version>${postgresql.version}</version>
+                    </dependency>
+                    <!-- Jakarta Validation API -->
+                    <dependency>
+                        <groupId>jakarta.validation</groupId>
+                        <artifactId>jakarta.validation-api</artifactId>
+                        <version>${jakarta-validation-api.version}</version>
+                    </dependency>
+                    <!-- Hibernate Validator -->
+                    <dependency>
+                        <groupId>org.hibernate.validator</groupId>
+                        <artifactId>hibernate-validator</artifactId>
+                        <version>${hibernate-validator.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!-- Profiles -->
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <spring.profiles.active>dev</spring.profiles.active>
+            </properties>
+        </profile>
+    </profiles>
+</project>

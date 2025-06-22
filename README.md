@@ -1,2 +1,2 @@
 # recipe-api
-Recipe Management API
+Recipe management API
