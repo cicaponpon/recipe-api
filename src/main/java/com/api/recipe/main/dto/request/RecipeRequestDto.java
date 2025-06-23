@@ -14,29 +14,29 @@ import java.util.List;
 @Data
 public class RecipeRequestDto {
 
-    @NotBlank(message = "Title is required")
+    @NotBlank(message = "{recipe.title.required}")
     private String title;
 
-    @NotBlank(message = "Description is required")
+    @NotBlank(message = "{recipe.description.required}")
     private String description;
 
-    @NotEmpty(message = "Ingredients list must not be empty")
+    @NotEmpty(message = "{recipe.ingredients.required}")
     private List<@Valid IngredientRequestDto> ingredients;
 
-    @NotBlank(message = "Instruction is required")
+    @NotBlank(message = "{recipe.instruction.required}")
     private String instruction;
 
-    @NotNull(message = "Vegetarian flag is required")
+    @NotNull(message = "{recipe.vegetarian.required}")
     private Boolean vegetarian;
 
-    @NotNull(message = "Servings is required")
-    @Min(value = 1, message = "Servings must be at least 1")
+    @NotNull(message = "{recipe.servings.required}")
+    @Min(value = 1, message = "{recipe.servings.min}")
     private Integer servings;
 
     @Data
     public static class IngredientRequestDto {
 
-        @NotBlank(message = "Ingredient name is required")
+        @NotBlank(message = "{ingredient.name.required}")
         private String name;
     }
 

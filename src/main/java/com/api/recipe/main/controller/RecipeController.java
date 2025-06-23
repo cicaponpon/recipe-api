@@ -1,10 +1,11 @@
 package com.api.recipe.main.controller;
 
 import com.api.recipe.common.dto.response.ApiResponse;
+import com.api.recipe.common.service.TranslatorService;
 import com.api.recipe.main.dto.request.RecipeRequestDto;
 import com.api.recipe.main.dto.response.RecipeCreatedDto;
-import com.api.recipe.main.dto.response.RecipeViewDto;
 import com.api.recipe.main.dto.response.RecipeUpdatedDto;
+import com.api.recipe.main.dto.response.RecipeViewDto;
 import com.api.recipe.main.service.RecipeService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Null;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 @RestController
@@ -25,16 +27,18 @@ import java.util.UUID;
 public class RecipeController {
 
     private final RecipeService recipeService;
+    private final TranslatorService translatorService;
 
     /**
      * CREATE RECIPE API
      */
     @PostMapping
-    public ResponseEntity<ApiResponse<RecipeCreatedDto>> createRecipe(@Valid @RequestBody RecipeRequestDto recipeRequestDto) {
+    public ResponseEntity<ApiResponse<RecipeCreatedDto>> createRecipe(@Valid @RequestBody RecipeRequestDto recipeRequestDto,
+                                                                      Locale locale) {
         RecipeCreatedDto recipeCreatedDto = recipeService.createRecipe(recipeRequestDto);
         ApiResponse<RecipeCreatedDto> response = new ApiResponse<>(
                 true,
-                "Recipe created successfully",
+                translatorService.process("recipe.create.success", locale),
                 recipeCreatedDto
         );
 
@@ -45,11 +49,11 @@ public class RecipeController {
      * GET RECIPE API
      */
     @GetMapping("/{uuid}")
-    public ResponseEntity<ApiResponse<RecipeViewDto>> getRecipe(@PathVariable UUID uuid) {
+    public ResponseEntity<ApiResponse<RecipeViewDto>> getRecipe(@PathVariable UUID uuid, Locale locale) {
         RecipeViewDto recipeViewDto = recipeService.getRecipe(uuid);
         ApiResponse<RecipeViewDto> response = new ApiResponse<>(
                 true,
-                "Recipe retrieved successfully",
+                translatorService.process("recipe.get.success", locale),
                 recipeViewDto
         );
 
@@ -61,11 +65,11 @@ public class RecipeController {
      */
     @PutMapping("/{uuid}")
     public ResponseEntity<ApiResponse<RecipeUpdatedDto>> updateRecipe(@Valid @RequestBody RecipeRequestDto recipeRequestDto,
-                                                                      @PathVariable UUID uuid) {
+                                                                      @PathVariable UUID uuid, Locale locale) {
         RecipeUpdatedDto recipeUpdatedDto = recipeService.updateRecipe(recipeRequestDto, uuid);
         ApiResponse<RecipeUpdatedDto> response = new ApiResponse<>(
                 true,
-                "Recipe updated successfully",
+                translatorService.process("recipe.update.success", locale),
                 recipeUpdatedDto
         );
 
@@ -76,11 +80,11 @@ public class RecipeController {
      * DELETE RECIPE API
      */
     @DeleteMapping("/{uuid}")
-    public ResponseEntity<ApiResponse<Null>> deleteRecipe(@PathVariable UUID uuid) {
+    public ResponseEntity<ApiResponse<Null>> deleteRecipe(@PathVariable UUID uuid, Locale locale) {
         recipeService.deleteRecipe(uuid);
         ApiResponse<Null> response = new ApiResponse<>(
                 true,
-                "Recipe deleted successfully"
+                translatorService.process("recipe.delete.success", locale)
         );
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -96,11 +100,20 @@ public class RecipeController {
             @RequestParam(required = false) List<String> includedIngredients,
             @RequestParam(required = false) List<String> excludedIngredients,
             @RequestParam(required = false) String instruction,
-            @PageableDefault Pageable pageable) {
+            @PageableDefault Pageable pageable,
+            Locale locale) {
         Page<RecipeViewDto> results = recipeService.searchRecipes(
                 vegetarian, servings, includedIngredients, excludedIngredients, instruction, pageable
         );
 
-        return ResponseEntity.ok(new ApiResponse<>(true, "Search successful", results));
+        String messageKey = results.isEmpty() ? "recipe.search.empty" : "recipe.search.success";
+
+        ApiResponse<Page<RecipeViewDto>> response = new ApiResponse<>(
+                true,
+                translatorService.process(messageKey, locale),
+                results
+        );
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

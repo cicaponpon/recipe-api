@@ -1,5 +1,6 @@
 package com.api.recipe.main.service;
 
+import com.api.recipe.common.service.TranslatorService;
 import com.api.recipe.main.dto.request.RecipeRequestDto;
 import com.api.recipe.main.dto.response.RecipeCreatedDto;
 import com.api.recipe.main.dto.response.RecipeUpdatedDto;
@@ -27,6 +28,7 @@ import static com.api.recipe.main.specification.RecipeSpecification.*;
 public class RecipeService {
 
     private final RecipeRepository recipeRepository;
+    private final TranslatorService translatorService;
 
     /**
      * Create new recipe
@@ -54,7 +56,9 @@ public class RecipeService {
     public RecipeViewDto getRecipe(UUID uuid) {
         // Find recipe
         RecipeViewProjection recipeViewProjection = recipeRepository.findByUuid(uuid)
-                .orElseThrow(() -> new EntityNotFoundException("Recipe not found with UUID: " + uuid));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        getRecipeNotFoundMessage(uuid)
+                ));
 
         RecipeViewDto recipeViewDto = new RecipeViewDto();
         BeanUtils.copyProperties(recipeViewProjection, recipeViewDto);
@@ -69,7 +73,9 @@ public class RecipeService {
     public RecipeUpdatedDto updateRecipe(RecipeRequestDto recipeRequestDto, UUID uuid) {
         // Find recipe
         Recipe recipe = recipeRepository.findEntityByUuid(uuid)
-                .orElseThrow(() -> new EntityNotFoundException("Recipe not found with UUID: " + uuid));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        getRecipeNotFoundMessage(uuid)
+                ));
         BeanUtils.copyProperties(recipeRequestDto, recipe);
 
         // Clear and update ingredients
@@ -92,7 +98,9 @@ public class RecipeService {
     @Transactional
     public void deleteRecipe(UUID uuid) {
         Recipe recipe = recipeRepository.findEntityByUuid(uuid)
-                .orElseThrow(() -> new EntityNotFoundException("Recipe not found with UUID: " + uuid));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        getRecipeNotFoundMessage(uuid)
+                ));
 
         recipeRepository.delete(recipe);
     }
@@ -137,5 +145,9 @@ public class RecipeService {
         BeanUtils.copyProperties(recipe, dto);
         dto.setIngredients(dto.fromIngredients(recipe.getIngredients()));
         return dto;
+    }
+
+    private String getRecipeNotFoundMessage(UUID uuid) {
+        return translatorService.process("error.recipe.not.found", new Object[]{uuid});
     }
 }

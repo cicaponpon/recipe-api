@@ -1,22 +1,26 @@
 package com.api.recipe.common.exception;
 
 import com.api.recipe.common.dto.response.ApiResponse;
+import com.api.recipe.common.service.TranslatorService;
 import com.api.recipe.common.util.ConstantUtil;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import java.text.MessageFormat;
 import java.util.List;
 
 @SuppressWarnings(ConstantUtil.UNUSED_WARNING)
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class ApiResponseExceptionHandler {
 
-    @SuppressWarnings(ConstantUtil.UNUSED_WARNING)
+    private final TranslatorService translatorService;
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleValidationException(MethodArgumentNotValidException ex) {
         List<String> errorMessages = ex.getBindingResult()
@@ -27,7 +31,7 @@ public class ApiResponseExceptionHandler {
 
         ApiResponse<Void> response = new ApiResponse<>(
                 false,
-                "Validation failed",
+                translatorService.process("error.validation.failed"),
                 null,
                 errorMessages
         );
@@ -41,11 +45,9 @@ public class ApiResponseExceptionHandler {
         Class<?> requiredType = ex.getRequiredType();
         String expectedType = requiredType != null ? requiredType.getSimpleName() : "Unknown";
 
-        String message = MessageFormat.format(
-                "Invalid value for parameter ''{0}''. Expected type: {1}",
-                paramName,
-                expectedType
-        );
+        String message = translatorService.process("error.invalid.parameter",
+                new Object[]{paramName,
+                        expectedType});
 
         ApiResponse<Void> response = new ApiResponse<>(
                 false,
@@ -64,6 +66,6 @@ public class ApiResponseExceptionHandler {
                 null
         );
 
-        return ResponseEntity.status(404).body(response);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 }
