@@ -3,7 +3,10 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.32.xsd">
-    <changeSet author="chin" id="1750596430781-1">
+    <changeSet author="chin" id="1750661858350-1">
+        <createSequence incrementBy="1" sequenceName="global_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="chin" id="1750661858350-2">
         <createTable tableName="recipe">
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="recipePK"/>
@@ -29,12 +32,15 @@
             <column name="title" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
+            <column name="uuid" type="UUID">
+                <constraints nullable="false"/>
+            </column>
             <column name="vegetarian" type="BOOLEAN">
                 <constraints nullable="false"/>
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="chin" id="1750596430781-2">
+    <changeSet author="chin" id="1750661858350-3">
         <createTable tableName="recipe_ingredients">
             <column name="recipe_id" type="BIGINT">
                 <constraints nullable="false"/>
@@ -44,7 +50,10 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="chin" id="1750596430781-3">
+    <changeSet author="chin" id="1750661858350-4">
+        <addUniqueConstraint columnNames="uuid" constraintName="UC_RECIPEUUID_COL" tableName="recipe"/>
+    </changeSet>
+    <changeSet author="chin" id="1750661858350-5">
         <addForeignKeyConstraint baseColumnNames="recipe_id" baseTableName="recipe_ingredients" constraintName="FKhnsmvxdlwxqq6x2wbgnoef5gr" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="recipe" validate="true"/>
     </changeSet>
 </databaseChangeLog>

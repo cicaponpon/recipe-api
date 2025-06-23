@@ -6,12 +6,16 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @Entity
 @EqualsAndHashCode(callSuper = true)
 @Table(name = "recipe")
 public class Recipe extends BaseEntity {
+
+    @Column(name = "uuid", nullable = false, unique = true, updatable = false)
+    private UUID uuid = UUID.randomUUID();
 
     @Column(name = "title", nullable = false)
     private String title;
