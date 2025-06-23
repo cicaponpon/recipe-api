@@ -1,6 +1,7 @@
 package com.api.recipe.main.specification;
 
 import com.api.recipe.common.entity.BaseEntity;
+import com.api.recipe.main.entity.Ingredient;
 import com.api.recipe.main.entity.Recipe;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Root;
@@ -46,22 +47,31 @@ public class RecipeSpecification {
     }
 
     /**
-     * WHERE ingredients IN (:includedIngredients)
+     * WHERE LOWER(ingredient.name) LIKE %:includedIngredient%
      */
     public static Specification<Recipe> includeIngredients(List<String> ingredients) {
         return (root, query, cb) -> {
             if (ingredients == null || ingredients.isEmpty()) {
                 return cb.conjunction();
             }
-            Join<Recipe, String> ingredientJoin = root.join(Recipe.Fields.INGREDIENTS);
-            return ingredientJoin.in(ingredients);
+
+            Join<Recipe, ?> ingredientJoin = root.join(Recipe.Fields.INGREDIENTS);
+
+            List<jakarta.persistence.criteria.Predicate> predicates = ingredients.stream()
+                    .filter(StringUtils::hasText)
+                    .map(ingredient ->
+                            cb.like(cb.lower(ingredientJoin.get(Ingredient.Fields.NAME)), "%" + ingredient.toLowerCase() + "%"))
+                    .toList();
+
+            return cb.or(predicates.toArray(new jakarta.persistence.criteria.Predicate[0]));
         };
     }
 
+
     /**
      * WHERE id NOT IN (
-     * SELECT recipe_id FROM recipe_ingredients
-     * WHERE ingredient IN (:excludedIngredients)
+     * SELECT recipe_id FROM ingredient
+     * WHERE LOWER(name) LIKE %:excludedIngredient%
      * )
      */
     public static Specification<Recipe> excludeIngredients(List<String> ingredients) {
@@ -70,14 +80,20 @@ public class RecipeSpecification {
                 return cb.conjunction();
             }
 
-            Subquery<Long> excludedRecipeIdSubquery = query.subquery(Long.class);
-            Root<Recipe> subRecipeRoot = excludedRecipeIdSubquery.from(Recipe.class);
-            Join<Recipe, String> subIngredientJoin = subRecipeRoot.join(Recipe.Fields.INGREDIENTS);
+            Subquery<Long> subquery = query.subquery(Long.class);
+            Root<Recipe> subRoot = subquery.from(Recipe.class);
+            Join<Recipe, ?> subIngredientJoin = subRoot.join(Recipe.Fields.INGREDIENTS);
 
-            excludedRecipeIdSubquery.select(subRecipeRoot.get(BaseEntity.Fields.ID))
-                    .where(subIngredientJoin.in(ingredients));
+            List<jakarta.persistence.criteria.Predicate> predicates = ingredients.stream()
+                    .filter(StringUtils::hasText)
+                    .map(ingredient ->
+                            cb.like(cb.lower(subIngredientJoin.get(Ingredient.Fields.NAME)), "%" + ingredient.toLowerCase() + "%"))
+                    .toList();
 
-            return cb.not(root.get(BaseEntity.Fields.ID).in(excludedRecipeIdSubquery));
+            subquery.select(subRoot.get(BaseEntity.Fields.ID))
+                    .where(cb.or(predicates.toArray(new jakarta.persistence.criteria.Predicate[0])));
+
+            return cb.not(root.get(BaseEntity.Fields.ID).in(subquery));
         };
     }
 }

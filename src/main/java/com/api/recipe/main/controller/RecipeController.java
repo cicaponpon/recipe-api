@@ -26,6 +26,9 @@ public class RecipeController {
 
     private final RecipeService recipeService;
 
+    /**
+     * CREATE RECIPE API
+     */
     @PostMapping
     public ResponseEntity<ApiResponse<RecipeCreatedDto>> createRecipe(@Valid @RequestBody RecipeRequestDto recipeRequestDto) {
         RecipeCreatedDto recipeCreatedDto = recipeService.createRecipe(recipeRequestDto);
@@ -38,6 +41,9 @@ public class RecipeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    /**
+     * GET RECIPE API
+     */
     @GetMapping("/{uuid}")
     public ResponseEntity<ApiResponse<RecipeViewDto>> getRecipe(@PathVariable UUID uuid) {
         RecipeViewDto recipeViewDto = recipeService.getRecipe(uuid);
@@ -50,6 +56,9 @@ public class RecipeController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    /**
+     * UPDATE RECIPE API
+     */
     @PutMapping("/{uuid}")
     public ResponseEntity<ApiResponse<RecipeUpdatedDto>> updateRecipe(@Valid @RequestBody RecipeRequestDto recipeRequestDto,
                                                                       @PathVariable UUID uuid) {
@@ -63,6 +72,9 @@ public class RecipeController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    /**
+     * DELETE RECIPE API
+     */
     @DeleteMapping("/{uuid}")
     public ResponseEntity<ApiResponse<Null>> deleteRecipe(@PathVariable UUID uuid) {
         recipeService.deleteRecipe(uuid);
@@ -74,6 +86,9 @@ public class RecipeController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    /**
+     * SEARCH RECIPE API
+     */
     @GetMapping("/search")
     public ResponseEntity<ApiResponse<Page<RecipeViewDto>>> searchRecipes(
             @RequestParam(required = false) Boolean vegetarian,

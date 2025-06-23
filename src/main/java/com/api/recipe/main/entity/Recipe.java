@@ -2,6 +2,7 @@ package com.api.recipe.main.entity;
 
 import com.api.recipe.common.entity.BaseEntity;
 import com.api.recipe.common.util.ConstantUtil;
+import com.api.recipe.main.dto.response.RecipeViewDto;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -36,10 +37,8 @@ public class Recipe extends BaseEntity {
     @Column(name = Fields.DESCRIPTION, nullable = false)
     private String description;
 
-    @ElementCollection
-    @CollectionTable(name = "recipe_ingredients", joinColumns = @JoinColumn(name = "recipe_id"))
-    @Column(name = Fields.INGREDIENTS, nullable = false)
-    private List<String> ingredients;
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Ingredient> ingredients;
 
     @Column(name = Fields.INSTRUCTION, columnDefinition = "TEXT", nullable = false)
     private String instruction;

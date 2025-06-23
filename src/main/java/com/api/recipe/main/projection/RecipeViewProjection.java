@@ -1,5 +1,6 @@
 package com.api.recipe.main.projection;
 
+import com.api.recipe.main.entity.Ingredient;
 import com.api.recipe.main.entity.Recipe;
 import org.springframework.data.rest.core.config.Projection;
 
@@ -17,7 +18,7 @@ public interface RecipeViewProjection {
 
     String getDescription();
 
-    List<String> getIngredients();
+    List<Ingredient> getIngredients();
 
     String getInstruction();
 

@@ -1,5 +1,6 @@
 package com.api.recipe.main.dto.response;
 
+import com.api.recipe.main.entity.Ingredient;
 import lombok.Data;
 
 import java.time.OffsetDateTime;
@@ -16,11 +17,30 @@ public class RecipeViewDto {
 
     private String description;
 
-    private List<String> ingredients;
+    private List<IngredientViewDto> ingredients;
 
     private String instruction;
 
     private boolean vegetarian;
 
     private int servings;
+
+    @Data
+    public static class IngredientViewDto {
+        private String name;
+    }
+
+    /**
+     * Creates ingredient DTOs from entities
+     */
+    public List<IngredientViewDto> fromIngredients(List<? extends Ingredient> ingredients) {
+        return ingredients.stream()
+                .map(i -> {
+                    IngredientViewDto dto = new IngredientViewDto();
+                    dto.setName(i.getName());
+                    return dto;
+                })
+                .toList();
+    }
+
 }
