@@ -10,20 +10,29 @@ import java.time.OffsetDateTime;
 @Data
 @MappedSuperclass
 public class BaseEntity {
+    public static class Fields {
+        public static final String ID = "id";
+        public static final String CREATED_AT = "created_at";
+        public static final String UPDATED_AT = "updated_at";
+        public static final String MODIFIED_BY = "modified_by";
+
+        private Fields() {
+        }
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "global_seq")
     @SequenceGenerator(name = "global_seq", sequenceName = "global_seq", allocationSize = 1)
-    @Column(name = "id")
+    @Column(name = Fields.ID)
     private Long id;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = Fields.CREATED_AT, nullable = false, updatable = false)
     private OffsetDateTime createdAt;
 
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = Fields.UPDATED_AT, nullable = false)
     private OffsetDateTime updatedAt;
 
-    @Column(name = "modified_by", nullable = false)
+    @Column(name = Fields.MODIFIED_BY, nullable = false)
     private String modifiedBy;
 
     @SuppressWarnings(ConstantUtil.UNUSED_WARNING)

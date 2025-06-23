@@ -1,6 +1,7 @@
 package com.api.recipe.main.entity;
 
 import com.api.recipe.common.entity.BaseEntity;
+import com.api.recipe.common.util.ConstantUtil;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,27 +14,47 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 @Table(name = "recipe")
 public class Recipe extends BaseEntity {
+    public static class Fields {
+        public static final String UUID = "uuid";
+        public static final String TITLE = "title";
+        public static final String DESCRIPTION = "description";
+        public static final String INGREDIENTS = "ingredients";
+        public static final String INSTRUCTION = "instruction";
+        public static final String VEGETARIAN = "vegetarian";
+        public static final String SERVINGS = "servings";
 
-    @Column(name = "uuid", nullable = false, unique = true, updatable = false)
-    private UUID uuid = UUID.randomUUID();
+        private Fields() {
+        }
+    }
 
-    @Column(name = "title", nullable = false)
+    @Column(name = Fields.UUID, nullable = false, unique = true, updatable = false)
+    private UUID uuid;
+
+    @Column(name = Fields.TITLE, nullable = false)
     private String title;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = Fields.DESCRIPTION, nullable = false)
     private String description;
 
     @ElementCollection
     @CollectionTable(name = "recipe_ingredients", joinColumns = @JoinColumn(name = "recipe_id"))
-    @Column(name = "ingredients", nullable = false)
+    @Column(name = Fields.INGREDIENTS, nullable = false)
     private List<String> ingredients;
 
-    @Column(name = "instruction", columnDefinition = "TEXT", nullable = false)
+    @Column(name = Fields.INSTRUCTION, columnDefinition = "TEXT", nullable = false)
     private String instruction;
 
-    @Column(name = "vegetarian", nullable = false)
+    @Column(name = Fields.VEGETARIAN, nullable = false)
     private boolean vegetarian;
 
-    @Column(name = "servings", nullable = false)
+    @Column(name = Fields.SERVINGS, nullable = false)
     private int servings;
+
+    @SuppressWarnings(ConstantUtil.UNUSED_WARNING)
+    @PrePersist
+    protected void prePersist() {
+        if (uuid == null) {
+            uuid = UUID.randomUUID();
+        }
+    }
 }
