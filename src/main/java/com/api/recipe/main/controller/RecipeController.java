@@ -7,6 +7,8 @@ import com.api.recipe.main.dto.response.RecipeCreatedDto;
 import com.api.recipe.main.dto.response.RecipeUpdatedDto;
 import com.api.recipe.main.dto.response.RecipeViewDto;
 import com.api.recipe.main.service.RecipeService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
+@Tag(name = "Recipe Controller", description = "Operations related to recipes")
 @RestController
 @RequestMapping("/api/recipe")
 @RequiredArgsConstructor
@@ -29,9 +32,7 @@ public class RecipeController {
     private final RecipeService recipeService;
     private final TranslatorService translatorService;
 
-    /**
-     * CREATE RECIPE API
-     */
+    @Operation(summary = "Create a new recipe", description = "Creates a new recipe by accepting recipe details.")
     @PostMapping
     public ResponseEntity<ApiResponse<RecipeCreatedDto>> createRecipe(@Valid @RequestBody RecipeRequestDto recipeRequestDto,
                                                                       Locale locale) {
@@ -45,9 +46,11 @@ public class RecipeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    /**
-     * GET RECIPE API
-     */
+
+    @Operation(
+            summary = "Get recipe by UUID",
+            description = "Retrieves a single recipe using its UUID, including full details and list of ingredients."
+    )
     @GetMapping("/{uuid}")
     public ResponseEntity<ApiResponse<RecipeViewDto>> getRecipe(@PathVariable UUID uuid, Locale locale) {
         RecipeViewDto recipeViewDto = recipeService.getRecipe(uuid);
@@ -60,9 +63,11 @@ public class RecipeController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    /**
-     * UPDATE RECIPE API
-     */
+
+    @Operation(
+            summary = "Update an existing recipe",
+            description = "Updates the details of an existing recipe by UUID with new data provided in the request body."
+    )
     @PutMapping("/{uuid}")
     public ResponseEntity<ApiResponse<RecipeUpdatedDto>> updateRecipe(@Valid @RequestBody RecipeRequestDto recipeRequestDto,
                                                                       @PathVariable UUID uuid, Locale locale) {
@@ -76,9 +81,7 @@ public class RecipeController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    /**
-     * DELETE RECIPE API
-     */
+    @Operation(summary = "Delete a recipe", description = "Deletes a recipe identified by its UUID.")
     @DeleteMapping("/{uuid}")
     public ResponseEntity<ApiResponse<Null>> deleteRecipe(@PathVariable UUID uuid, Locale locale) {
         recipeService.deleteRecipe(uuid);
@@ -90,9 +93,12 @@ public class RecipeController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    /**
-     * SEARCH RECIPE API
-     */
+    @Operation(
+            summary = "Search recipes with filters",
+            description = "Searches recipes using optional filters: vegetarian flag, number of servings, " +
+                    "and partial text matches for included/excluded ingredients and instruction content. " +
+                    "Supports pagination."
+    )
     @GetMapping("/search")
     public ResponseEntity<ApiResponse<Page<RecipeViewDto>>> searchRecipes(
             @RequestParam(required = false) Boolean vegetarian,
