@@ -21,9 +21,9 @@ public class RecipeViewDto {
 
     private String instruction;
 
-    private boolean vegetarian;
+    private Boolean vegetarian;
 
-    private int servings;
+    private Integer servings;
 
     @Data
     public static class IngredientViewDto {
