@@ -8,7 +8,9 @@ import lombok.EqualsAndHashCode;
 @Data
 @Entity
 @EqualsAndHashCode(callSuper = true)
-@Table(name = "ingredient")
+@Table(name = "ingredient", indexes = {
+        @Index(name = "idx_ingredient_recipe_id", columnList = "recipe_id")
+})
 public class Ingredient extends BaseEntity {
     public static class Fields {
         public static final String NAME = "name";

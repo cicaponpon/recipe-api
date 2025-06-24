@@ -12,7 +12,10 @@ import java.util.UUID;
 @Data
 @Entity
 @EqualsAndHashCode(callSuper = true)
-@Table(name = "recipe")
+@Table(name = "recipe", indexes = {
+        @Index(name = "idx_recipe_vegetarian", columnList = "vegetarian"),
+        @Index(name = "idx_recipe_servings", columnList = "servings"),
+})
 public class Recipe extends BaseEntity {
     public static class Fields {
         public static final String UUID = "uuid";

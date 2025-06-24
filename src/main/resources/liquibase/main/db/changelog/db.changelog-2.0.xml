@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.32.xsd">
+    <changeSet author="chin" id="1750768699112-7">
+        <createIndex indexName="idx_ingredient_recipe_id" tableName="ingredient">
+            <column name="recipe_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="chin" id="1750768699112-8">
+        <createIndex indexName="idx_recipe_servings" tableName="recipe">
+            <column name="servings"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="chin" id="1750768699112-9">
+        <createIndex indexName="idx_recipe_vegetarian" tableName="recipe">
+            <column name="vegetarian"/>
+        </createIndex>
+    </changeSet>
+    <!-- GIN index for LIKE '%...%' performance using pg_trgm (PostgreSQL Trigram Extension) -->
+    <changeSet author="chin" id="1750768699112-10" dbms="postgresql">
+        <sql>
+            CREATE EXTENSION IF NOT EXISTS pg_trgm;
+        </sql>
+    </changeSet>
+    <changeSet author="chin" id="1750768699112-11" dbms="postgresql">
+        <sql>
+            CREATE INDEX idx_recipe_instruction_trgm ON recipe USING gin (instruction gin_trgm_ops);
+        </sql>
+    </changeSet>
+    <changeSet author="chin" id="1750768699112-12" dbms="postgresql">
+        <sql>
+            CREATE INDEX idx_ingredient_name_trgm ON ingredient USING gin (name gin_trgm_ops);
+        </sql>
+    </changeSet>
+</databaseChangeLog>
