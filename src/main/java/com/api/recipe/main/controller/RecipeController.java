@@ -1,6 +1,7 @@
 package com.api.recipe.main.controller;
 
 import com.api.recipe.common.dto.response.ApiResponse;
+import com.api.recipe.common.dto.response.PageResponse;
 import com.api.recipe.common.service.TranslatorService;
 import com.api.recipe.main.dto.request.RecipeRequestDto;
 import com.api.recipe.main.dto.response.RecipeCreatedDto;
@@ -60,7 +61,7 @@ public class RecipeController {
                 recipeViewDto
         );
 
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.ok(response);
     }
 
 
@@ -78,7 +79,7 @@ public class RecipeController {
                 recipeUpdatedDto
         );
 
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Delete a recipe", description = "Deletes a recipe identified by its UUID.")
@@ -90,7 +91,7 @@ public class RecipeController {
                 translatorService.process("recipe.delete.success", locale)
         );
 
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.ok(response);
     }
 
     @Operation(
@@ -100,7 +101,7 @@ public class RecipeController {
                     "Supports pagination."
     )
     @GetMapping("/search")
-    public ResponseEntity<ApiResponse<Page<RecipeViewDto>>> searchRecipes(
+    public ResponseEntity<ApiResponse<PageResponse<RecipeViewDto>>> searchRecipes(
             @RequestParam(required = false) Boolean vegetarian,
             @RequestParam(required = false) Integer servings,
             @RequestParam(required = false) List<String> includedIngredients,
@@ -108,18 +109,19 @@ public class RecipeController {
             @RequestParam(required = false) String instruction,
             @PageableDefault Pageable pageable,
             Locale locale) {
+
         Page<RecipeViewDto> results = recipeService.searchRecipes(
                 vegetarian, servings, includedIngredients, excludedIngredients, instruction, pageable
         );
 
         String messageKey = results.isEmpty() ? "recipe.search.empty" : "recipe.search.success";
 
-        ApiResponse<Page<RecipeViewDto>> response = new ApiResponse<>(
+        ApiResponse<PageResponse<RecipeViewDto>> response = new ApiResponse<>(
                 true,
                 translatorService.process(messageKey, locale),
-                results
+                new PageResponse<>(results)
         );
 
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.ok(response);
     }
 }

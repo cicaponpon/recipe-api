@@ -33,7 +33,7 @@ public class RecipeViewDto {
     /**
      * Creates ingredient DTOs from entities
      */
-    public List<IngredientViewDto> fromIngredients(List<? extends Ingredient> ingredients) {
+    public static List<IngredientViewDto> fromIngredients(List<? extends Ingredient> ingredients) {
         return ingredients.stream()
                 .map(i -> {
                     IngredientViewDto dto = new IngredientViewDto();

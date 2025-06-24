@@ -62,7 +62,7 @@ public class RecipeService {
 
         RecipeViewDto recipeViewDto = new RecipeViewDto();
         BeanUtils.copyProperties(recipeViewProjection, recipeViewDto);
-        recipeViewDto.setIngredients(recipeViewDto.fromIngredients(recipeViewProjection.getIngredients()));
+        recipeViewDto.setIngredients(RecipeViewDto.fromIngredients(recipeViewProjection.getIngredients()));
         return recipeViewDto;
     }
 
@@ -143,7 +143,7 @@ public class RecipeService {
     private RecipeViewDto convertToRecipeViewDto(Recipe recipe) {
         RecipeViewDto dto = new RecipeViewDto();
         BeanUtils.copyProperties(recipe, dto);
-        dto.setIngredients(dto.fromIngredients(recipe.getIngredients()));
+        dto.setIngredients(RecipeViewDto.fromIngredients(recipe.getIngredients()));
         return dto;
     }
 

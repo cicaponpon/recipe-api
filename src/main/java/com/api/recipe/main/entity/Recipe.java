@@ -2,7 +2,6 @@ package com.api.recipe.main.entity;
 
 import com.api.recipe.common.entity.BaseEntity;
 import com.api.recipe.common.util.ConstantUtil;
-import com.api.recipe.main.dto.response.RecipeViewDto;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -44,10 +43,10 @@ public class Recipe extends BaseEntity {
     private String instruction;
 
     @Column(name = Fields.VEGETARIAN, nullable = false)
-    private boolean vegetarian;
+    private Boolean vegetarian;
 
     @Column(name = Fields.SERVINGS, nullable = false)
-    private int servings;
+    private Integer servings;
 
     @SuppressWarnings(ConstantUtil.UNUSED_WARNING)
     @PrePersist
