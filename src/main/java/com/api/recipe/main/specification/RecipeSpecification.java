@@ -1,6 +1,7 @@
 package com.api.recipe.main.specification;
 
 import com.api.recipe.common.entity.BaseEntity;
+import com.api.recipe.common.util.ConstantUtil;
 import com.api.recipe.main.entity.Ingredient;
 import com.api.recipe.main.entity.Recipe;
 import jakarta.persistence.criteria.Join;
@@ -39,10 +40,10 @@ public class RecipeSpecification {
     /**
      * WHERE LOWER(instruction) LIKE %:keyword%
      */
-    public static Specification<Recipe> containsInstruction(String keyword) {
+    public static Specification<Recipe> containsInstruction(String instruction) {
         return (root, query, cb) ->
-                StringUtils.hasText(keyword)
-                        ? cb.like(cb.lower(root.get(Recipe.Fields.INSTRUCTION)), "%" + keyword.toLowerCase() + "%")
+                StringUtils.hasText(instruction)
+                        ? cb.like(cb.lower(root.get(Recipe.Fields.INSTRUCTION)), like(instruction))
                         : cb.conjunction();
     }
 
@@ -60,7 +61,7 @@ public class RecipeSpecification {
             List<jakarta.persistence.criteria.Predicate> predicates = ingredients.stream()
                     .filter(StringUtils::hasText)
                     .map(ingredient ->
-                            cb.like(cb.lower(ingredientJoin.get(Ingredient.Fields.NAME)), "%" + ingredient.toLowerCase() + "%"))
+                            cb.like(cb.lower(ingredientJoin.get(Ingredient.Fields.NAME)), like(ingredient)))
                     .toList();
 
             return cb.or(predicates.toArray(new jakarta.persistence.criteria.Predicate[0]));
@@ -87,7 +88,7 @@ public class RecipeSpecification {
             List<jakarta.persistence.criteria.Predicate> predicates = ingredients.stream()
                     .filter(StringUtils::hasText)
                     .map(ingredient ->
-                            cb.like(cb.lower(subIngredientJoin.get(Ingredient.Fields.NAME)), "%" + ingredient.toLowerCase() + "%"))
+                            cb.like(cb.lower(subIngredientJoin.get(Ingredient.Fields.NAME)), like(ingredient)))
                     .toList();
 
             subquery.select(subRoot.get(BaseEntity.Fields.ID))
@@ -95,5 +96,9 @@ public class RecipeSpecification {
 
             return cb.not(root.get(BaseEntity.Fields.ID).in(subquery));
         };
+    }
+
+    private static String like(String keyword) {
+        return ConstantUtil.WILDCARD_DELIMITER + keyword.toLowerCase() + ConstantUtil.WILDCARD_DELIMITER;
     }
 }

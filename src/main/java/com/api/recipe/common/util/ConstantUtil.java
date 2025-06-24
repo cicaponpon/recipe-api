@@ -6,6 +6,7 @@ public class ConstantUtil {
 
     // DELIMITER
     public static final String SYSTEM_DELIMITER = "SYSTEM";
+    public static final String WILDCARD_DELIMITER = "%";
 
     // WARNINGS
     public static final String UNUSED_WARNING = "unused";
