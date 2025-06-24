@@ -79,3 +79,59 @@ Once the application is running, you can access the interactive API documentatio
 
 ---
 
+### 🔄 Generating Liquibase Changelog
+
+Liquibase is used to generate changelogs by comparing entity definitions with the current database schema.
+
+To generate a new changelog:
+
+```bash
+# 1. Package the app (without running tests)
+mvn clean package -DskipTests
+
+# 2. Run Liquibase diff using the dev profile
+mvn liquibase:diff -Pdev
+```
+---
+
+### 🗂️ Project Structure
+
+- `controller/` – Handles incoming HTTP requests  
+- `service/` – Contains business logic  
+- `repository/` – Interfaces for data access using Spring Data JPA  
+- `entity/` – JPA entity classes mapped to database tables  
+- `dto/` – Data Transfer Objects for decoupling external requests/responses  
+- `common/` – Shared utilities, exceptions, and constants  
+
+---
+
+### 🧱 Database Design
+
+- `recipe` table stores core details like `title`, `description`, `instruction`, `vegetarian`, and `servings`  
+- Uses `UUID` as a unique, secure identifier for update, delete, and fetch operations.
+- `ingredient` table is separate and linked to recipe via a many-to-one relation to enable normalization and efficient ingredient-based searches.
+- Separate `ingredient` table for normalized structure
+- `BaseEntity` includes common fields like `id`, `createdAt`, `updatedAt`, and `modifiedBy`  
+
+---
+
+### ✅ Best Practices
+
+- `Layered architecture` for separation of concerns  
+- `DTO pattern` to decouple persistence models from API contracts
+- Used `Projection` in read operations to fetch only required fields and improve query performance
+- Centralized `exception handling` for cleaner controllers  
+- Externalized configuration using `environment variables`  
+- `Pagination` and `filtering` supported in search endpoints
+- Centralized `message handling` for consistent and localizable validations and errors
+- `Liquibase` is used to track and version schema changes, ensuring the database stays in sync with entity definitions during development
+
+---
+
+### 🧪 Testing
+
+- Used `JUnit 5` and `Mockito` for unit testing  
+- Focused on service layer logic and edge case validations  
+- API responses are tested using `MockMvc` in controller tests  
+
+---
