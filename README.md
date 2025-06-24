@@ -135,3 +135,16 @@ mvn liquibase:diff -Pdev
 - API responses are tested using `MockMvc` in controller tests  
 
 ---
+
+### 📬 Postman Collection
+
+Used Postman collection for testing and exploring the Recipe API endpoints.
+
+It includes requests for:
+
+- Creating, viewing, updating, searching, and deleting recipes
+- Automatically saving the `uuid` from responses to the `{{recipeUuid}}` variable for reuse in subsequent requests
+
+👉 [Download the Postman Collection](https://drive.google.com/file/d/1VlLaO1qJIgql_ULN_5u6N5qqK8XMFGat/view?usp=drive_link)
+
+---
